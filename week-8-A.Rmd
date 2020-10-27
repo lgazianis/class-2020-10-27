@@ -30,12 +30,29 @@ Weeks 7, 8 and 9 are the core of the class. We have a question. We have some dat
 
 * `att_chg` as a function of `gender`
 
+```{r}
+att_chg_gender <- stan_glm(att_chg ~ gender - 1,
+         data = week_8, 
+         refresh = 0)
+```
+
 
 * `att_chg` as a function of `liberal`
+
+```{r}
+att_chg_liberal <- stan_glm(att_chg ~ liberal - 1,
+                            data = week_8,
+                            refresh = 0)
+```
 
 
 * `att_chg` as a function of `treatment`
 
+```{r}
+att_chg_treatment = stan_glm(att_chg ~ treatment - 1,
+                             data = week_8,
+                             refresh = 0)
+```
 
 
 
@@ -45,11 +62,34 @@ Weeks 7, 8 and 9 are the core of the class. We have a question. We have some dat
 **Prompt:** For the model with `att_chg` as a function of `treatment`, create posterior probability densities for the two important parameters. Write a paragraph interpreting the meaning of those posteriors. 
 
 
+```{r}
+att_chg_treatment %>%
+  as_tibble() %>%
+  select(-sigma) %>%
+  pivot_longer(cols = everything(),
+  names_to = "parameter",
+  values_to = "attitude") %>%
+ggplot(aes(x = attitude, fill - paramter)) + 
+  geom_histogram(aes(y = after_stat(count/sum(count))),
+                 position = "identity",
+                 bins = 100, alpha = .5) +
+  labs(title = "Posterior Distribution")
+```
 
 
 ## Scene 3
 
 **Prompt:** Create a plot of the the posterior for the average treatment effect. Write a paragraph interpreting the plot.
 
+```{r}
+att_chg_treatment %>%
+  as_tibble() %>%
+  mutate(ATE = treatmentTreated - treatmentControl) %>%
+  ggplot(aes(x = ATE)) +
+  geom_histogram(aes(y = after_stat(count/sum(count))), binwidth = .05) +
+  labs(title = "Posterior Distribution for Average Treatment Effect of Experiment",
+       x = "Average Treatment Effect", y = "Probability")
+
+```
 
 
